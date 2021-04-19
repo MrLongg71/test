@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:test20210418/bloc/test_bloc.dart';
 import 'package:test20210418/bloc/test_event.dart';
+import 'package:test20210418/model.dart';
 
 import 'bloc/test_state.dart';
 import 'custom_slider.dart';
@@ -35,16 +36,20 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   double _value = 0.0;
   List<Color> _colorList = [Colors.green, Colors.red, Colors.blue];
-
+  List<Model> model = [];
   Color _colorLine;
   Color _colorCircle;
   Color _colorText;
+  int _keyLine = -1;
 
   @override
   void initState() {
     _colorLine = _colorList[0];
     _colorCircle = _colorList[0];
     _colorText = _colorList[0];
+
+    // model.add(Model(color:));
+
     super.initState();
   }
 
@@ -62,7 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
         if (state is ChangeColorState) {
           _colorLine = state.color;
         }
-        if(state is ChangeSliderState){
+        if (state is ChangeSliderState) {
           _value = state.value;
         }
       },
@@ -83,8 +88,7 @@ class _MyHomePageState extends State<MyHomePage> {
             trackShape: RectangularSliderTrackShape(),
             trackHeight: 4.0,
             thumbColor: _colorText,
-            thumbShape:
-                CustomSliderThumbCircle(thumbRadius: 25, min: 0, max: 100),
+            thumbShape: CustomSliderThumbCircle(thumbRadius: 25, min: 0, max: 100),
             overlayColor: _colorLine.withAlpha(32),
             overlayShape: RoundSliderOverlayShape(overlayRadius: 28.0),
           ),
@@ -120,6 +124,7 @@ class _MyHomePageState extends State<MyHomePage> {
         _buildLineColor(),
         _buildCircleColor(),
         _buildTextColor(),
+        _line(),
       ],
     );
   }
@@ -205,6 +210,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _buildTextColor() {
+    bool _check = true;
     return Container(
       height: 50,
       child: Row(
@@ -223,17 +229,32 @@ class _MyHomePageState extends State<MyHomePage> {
             itemCount: _colorList.length ?? 0,
             itemBuilder: (BuildContext context, int index) {
               return GestureDetector(
-                onTap: () {
-                  _colorText = _colorList[index];
-                  setState(() {});
-                },
-                child: Container(
-                  margin: EdgeInsets.all(10),
-                  color: _colorList[index],
-                  width: 50,
-                  height: 50,
-                ),
-              );
+                  onTap: () {
+                    _check = !_check;
+                    _colorText = _colorList[index];
+                    print(_check);
+                    setState(() {});
+                  },
+                  child: Stack(
+                    children: [
+                      Container(
+                        margin: EdgeInsets.all(10),
+                        color: _colorList[index],
+                        width: 50,
+                        height: 50,
+                      ),
+                      _check
+                          ? Align(
+                              child: Icon(
+                                Icons.check,
+                                size: 30.0,
+                                color: Colors.white,
+                              ),
+                              alignment: Alignment.center,
+                            )
+                          : Container()
+                    ],
+                  ));
             },
           )
         ],
@@ -241,18 +262,51 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-// Widget _buildList(){
-//   return  GridView.builder(
-//       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-//         crossAxisCount: 3,
-//       ),
-//       itemCount: 3,
-//       itemBuilder: (BuildContext context, int index) {
-//         return Card(
-//           color: Colors.amber,
-//           child: Center(child: Text('$index')),
-//         );
-//       }
-//   );
-// }
+  Widget _line() {
+    return Container(
+      height: 60,
+      width: MediaQuery.of(context).size.width,
+      child: Row(
+        children: [
+          Container(
+            child: Text('Line'),
+          ),
+          Expanded(
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              children: [
+                _item(indexKey: _keyLine, index: 0, color: Colors.green, tap: () => _tapLine(0)),
+                _item(indexKey: _keyLine, index: 1, color: Colors.green, tap: () => _tapLine(1)),
+                _item(indexKey: _keyLine, index: 2, color: Colors.green, tap: () => _tapLine(2)),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _item({int indexKey, int index, Color color, Function tap}) {
+    return Container(
+      width: 40,
+      height: 40,
+      child: RawMaterialButton(
+        padding: EdgeInsets.zero,
+        onPressed: tap,
+        child: Container(
+          child: Icon(
+            indexKey != index ? Icons.check_box_outline_blank : Icons.check_box,
+            color: color,
+            size: 30,
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _tapLine(int index) {
+    setState(() {
+      _keyLine = index;
+    });
+  }
 }
