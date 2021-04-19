@@ -18,10 +18,12 @@ class ChangeSliderEvent extends TestEvent {
 
 
 class ChangeColorEvent extends TestEvent {
+  final String key;
   final Color color;
 
-  ChangeColorEvent({this.color});
+
+  ChangeColorEvent({this.key,this.color});
 
   @override
-  List<Object> get props => [color];
+  List<Object> get props => [key,color];
 }

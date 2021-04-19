@@ -8,7 +8,7 @@ class TestBloc extends Bloc<TestEvent, TestState> {
   @override
   Stream<TestState> mapEventToState(TestEvent event) async* {
     if (event is ChangeColorEvent) {
-      yield ChangeColorState(color: event.color);
+      yield ChangeColorState(key: event.key, color: event.color);
     }
     if (event is ChangeSliderEvent) {
       yield ChangeSliderState(value: event.value);

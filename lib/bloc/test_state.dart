@@ -18,10 +18,11 @@ class ChangeSliderState extends TestState {
 }
 
 class ChangeColorState extends TestState {
+  final String key;
   final Color color;
 
-  ChangeColorState({this.color});
+  ChangeColorState({this.key, this.color});
 
   @override
-  List<Object> get props => [color];
+  List<Object> get props => [key, color];
 }
